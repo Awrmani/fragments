@@ -55,7 +55,7 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      -name: Install node dependencies and run Tests
+      - name: Install node dependencies and run Tests
         # There are two ways we could do this:
         #
         # 1. Call `npm ci` followed by `npm test` like so (NOTE: the use of | and -):
