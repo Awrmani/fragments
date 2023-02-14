@@ -8,9 +8,9 @@ const express = require('express');
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
-//const logger = require('../../logger');
+const logger = require('../../logger');
 
-const Fragment = require('../../model/fragment');
+const { Fragment } = require('../../model/fragment');
 const contentType = require('content-type');
 
 // Define our first route, which will be: GET /v1/fragments
@@ -28,6 +28,7 @@ const rawBody = () =>
       // a Buffer (e.g., `Buffer.isBuffer(req.body) === true`). If not, `req.body`
       // will be equal to an empty Object `{}` and `Buffer.isBuffer(req.body) === false`
       const { type } = contentType.parse(req);
+      logger.debug({ type }, 'middleware');
       return Fragment.isSupportedType(type);
     },
   });
