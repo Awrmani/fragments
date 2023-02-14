@@ -4,6 +4,8 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
+const logger = require('../logger');
+
 // Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
@@ -13,6 +15,21 @@ const {
   listFragments,
   deleteFragment,
 } = require('./data');
+
+const validTypes = [
+  `text/plain`,
+  /*
+   Currently, only text/plain is supported. Others will be added later.
+
+  `text/markdown`,
+  `text/html`,
+  `application/json`,
+  `image/png`,
+  `image/jpeg`,
+  `image/webp`,
+  `image/gif`,
+  */
+];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
@@ -40,8 +57,9 @@ class Fragment {
     this.created = created || new Date().toISOString();
     this.updated = updated || new Date().toISOString();
 
-    var content = contentType.parse(type);
-    this.type = contentType.format(content);
+    //var content = contentType.parse(type);
+    //this.type = contentType.format(content);
+    this.type = type;
 
     this.size = size;
   }
@@ -53,6 +71,8 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
+    logger.debug({ ownerId }, 'Owner ID');
+    logger.debug({ expand }, 'Expand');
     return await listFragments(ownerId, expand);
   }
 
@@ -67,7 +87,7 @@ class Fragment {
     if (!frag) {
       throw new Error(`fragment not found`);
     }
-    //return await readFragment(ownerId, id);
+
     return frag;
   }
 
@@ -140,7 +160,7 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return ['text/plain'];
+    return validTypes;
   }
 
   /**
@@ -149,17 +169,8 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    var res = true;
-    const acceptedTypes = ['text/plain'];
-    var types = value.replace(/\s+/g, '');
-    types = value.split(';');
-    types.forEach(() => {
-      if (!acceptedTypes.some((v) => types.includes(v))) {
-        res = false;
-      }
-    });
-
-    return res == true ? true : false;
+    const { type: parsedType } = contentType.parse(value);
+    return validTypes.some((validTypes) => validTypes === parsedType);
   }
 }
 
