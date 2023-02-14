@@ -5,6 +5,14 @@ const request = require('supertest');
 const app = require('../../src/app');
 const logger = require('../../src/logger');
 
+beforeAll(async () => {
+  await request(app)
+    .post('/v1/fragments')
+    .auth('user1@email.com', 'password1')
+    .set({ 'content-type': 'text/plain' })
+    .send('test');
+});
+
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
   test('unauthenticated requests are denied', () => request(app).get('/v1/fragments').expect(401));
@@ -22,5 +30,27 @@ describe('GET /v1/fragments', () => {
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
 
-  // TODO: we'll need to add tests to check the contents of the fragments array later
+  // Using a valid username/password pair should give a success result with a .fragments array with length 1
+  test('authenticated users get a fragments array with certain length (not expanded', async () => {
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    logger.debug(res.body.fragments, 'Returned fragment using get method');
+    console.log('-----------Fragment' + res.body.fragments);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(Array.isArray(res.body.fragments)).toBe(true);
+    expect(res.body.fragments.length).toBe(1);
+    expect(typeof res.body.fragments[0] === 'string').toBe(true);
+  });
+
+  test('authenticated users get a fragments array with certain length (expand)', async () => {
+    const res = await request(app)
+      .get('/v1/fragments/?expand=1')
+      .query({ expand: '1' })
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(Array.isArray(res.body.fragments)).toBe(true);
+    expect(res.body.fragments.length).toBe(1);
+    expect(typeof res.body.fragments[0] === 'object').toBe(true);
+  });
 });
