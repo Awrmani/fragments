@@ -70,10 +70,10 @@ class Fragment {
    * @param {boolean} expand whether to expand ids to full fragments
    * @returns Promise<Array<Fragment>>
    */
-  static async byUser(ownerId, expand = false) {
+  static byUser(ownerId, expand = false) {
     logger.debug({ ownerId }, 'Owner ID');
     logger.debug({ expand }, 'Expand');
-    return await listFragments(ownerId, expand);
+    return listFragments(ownerId, expand);
   }
 
   /**
