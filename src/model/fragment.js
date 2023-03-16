@@ -60,7 +60,6 @@ class Fragment {
     //var content = contentType.parse(type);
     //this.type = contentType.format(content);
     this.type = type;
-
     this.size = size;
   }
 
