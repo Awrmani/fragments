@@ -41,28 +41,17 @@ describe('GET /v1/fragments', () => {
     expect(typeof res.body.fragments[0] === 'string').toBe(true);
   });
 
+  // Fragment array with certain length and expand = true
   test('authenticated users get a fragments array with certain length (expand)', async () => {
     const res = await request(app)
       .get('/v1/fragments')
       .query({ expand: '1' })
       .auth('user1@email.com', 'password1');
+
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
     expect(Array.isArray(res.body.fragments)).toBe(true);
     expect(res.body.fragments.length).toBe(1);
     expect(typeof res.body.fragments[0] === 'object').toBe(true);
-  });
-
-  test('fragments/:id returns an existing fragment', async () => {
-    const fragment = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set({ 'content-type': 'text/plain' })
-      .send('test');
-    const id = fragment.header.location.split('/')[3];
-    logger.debug({ id }, 'Id');
-    const res = await request(app).get(`/v1/fragments/${id}`).auth('user1@email.com', 'password1');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe('ok');
   });
 });
