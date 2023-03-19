@@ -28,7 +28,7 @@ describe('GET /v1/fragments/:id/info', () => {
 
     const id = fragment.header.location.split('/')[3];
 
-    request(app)
+    await request(app)
       .get(`/v1/fragments/${id}/info`)
       .auth('invalid@email.com', 'incorrect_password')
       .expect(401);
