@@ -3,6 +3,7 @@
 const { createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const path = require('path');
+const md = require('markdown-it')();
 
 const logger = require('../../logger');
 
@@ -11,32 +12,38 @@ const logger = require('../../logger');
  */
 module.exports = async (req, res) => {
   try {
-    var id = req.params.id;
-    logger.debug(id, '---ID---');
-    //const fragment = await Fragment.byId(req.user, req.params.id);
-    var extension = path.extname(id);
-    //const contentType = req.getHeader('Content-Type');
-    extension += !extension ? '.txt' : '';
+    const idExt = req.params.id;
+    const id = path.parse(idExt).name;
+    logger.debug({ id }, '---ID---');
 
+    var extension = path.extname(req.url);
+    logger.debug({ extension }, 'GET /:id Extension');
+
+    const fragment = await Fragment.byId(req.user, id);
+    var fragmentData = await fragment.getData();
+    const data = Buffer.from(fragmentData).toString();
+    logger.debug({ data }, 'Data from Buffer');
+
+    extension += !extension ? '.txt' : '';
     if (extension === '.txt') {
-      // logic to convert to text/plain
       res.set('Content-Type', 'text/plain');
-      //res.send(`Text data for ID ${id}`);
     } else if (extension === '.md') {
-      // logic to convert to image/png
+      var dataHTML = md.render(data);
+      logger.debug({ dataHTML }, 'md Converted to html');
+      dataHTML = Buffer.from(dataHTML);
+      fragmentData = {
+        type: 'Buffer',
+        data: dataHTML.toJSON().data,
+      };
+
       res.set('Content-Type', 'text/html');
-      //res.send(`PNG image data for ID ${id}`);
     } else {
-      // raw data using original Content-Type
-      // logic to retrieve data by id
       const contentType = req.getHeader('Content-Type');
       res.set('Content-Type', contentType);
-      //res.send(`Data for ID ${id}`);
     }
 
-    const fragment = await Fragment.byId(req.user, req.params.id);
-
-    res.status(200).send(await fragment.getData());
+    res.status(200).send(fragmentData);
+    //res.status(200).json(createSuccessResponse({ fragmentData }));
   } catch (err) {
     res.status(400).json(createErrorResponse(400, 'Invalid request', err));
   }

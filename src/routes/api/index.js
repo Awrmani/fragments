@@ -16,7 +16,7 @@ const contentType = require('content-type');
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', require('./get'));
 router.get('/fragments/:id', require('./getById'));
-router.get('/fragments/:id/info', require('./getByIdInfo'));
+//router.get('/fragments/:id/info', require('./getByIdInfo'));
 // Other routes will go here later on...
 
 // Support sending various Content-Types on the body up to 5M in size
@@ -29,7 +29,7 @@ const rawBody = () =>
       // a Buffer (e.g., `Buffer.isBuffer(req.body) === true`). If not, `req.body`
       // will be equal to an empty Object `{}` and `Buffer.isBuffer(req.body) === false`
       const { type } = contentType.parse(req);
-      logger.debug({ type }, 'middleware');
+      logger.debug({ type }, 'Content-Type Parse Middleware');
       return Fragment.isSupportedType(type);
     },
   });
