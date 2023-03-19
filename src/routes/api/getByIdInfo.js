@@ -2,6 +2,7 @@
 
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
+const path = require('path');
 
 const logger = require('../../logger');
 
@@ -10,9 +11,12 @@ const logger = require('../../logger');
  */
 module.exports = async (req, res) => {
   try {
-    logger.debug(req.params.id, '---ID---');
-    const fragment = await Fragment.byId(req.user, req.params.id);
-    logger.debug({ fragment }, 'By ID');
+    const idExt = req.params.id;
+    const id = path.parse(idExt).name;
+    logger.debug({ id }, '---ID---');
+
+    const fragment = await Fragment.byId(req.user, id);
+    logger.debug({ fragment }, 'GET /:id/info metadata');
     res.status(200).json(createSuccessResponse({ fragment }));
   } catch (err) {
     res.status(400).json(createErrorResponse(400, 'Invalid request', err));
