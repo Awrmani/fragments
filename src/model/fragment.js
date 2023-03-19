@@ -160,7 +160,11 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return validTypes;
+    var format = [];
+    if (this.mimeType == 'text/plain') {
+      format.push('text/plain');
+    }
+    return format;
   }
 
   /**
