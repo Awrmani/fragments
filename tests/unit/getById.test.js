@@ -24,7 +24,7 @@ describe('GET /v1/fragments/:id', () => {
     const fragment = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set({ 'content-type': 'text/html' })
+      .set({ 'content-type': 'text/markdown' })
       .send('# test');
 
     const id = fragment.header.location.split('/')[3];
