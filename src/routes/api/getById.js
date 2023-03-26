@@ -24,9 +24,9 @@ module.exports = async (req, res) => {
     const data = Buffer.from(fragmentData).toString();
     logger.debug({ data }, 'Data from Buffer');
 
-    extension += !extension ? '.txt' : '';
+    //extension += !extension ? '.txt' : '';
     if (extension === '.txt') {
-      res.set('Content-Type', 'text/plain');
+      res.setHeader('Content-Type', 'text/plain');
     } else if (extension === '.md') {
       var dataHTML = md.render(data);
       logger.debug({ dataHTML }, 'md Converted to html');
@@ -36,10 +36,10 @@ module.exports = async (req, res) => {
         data: dataHTML.toJSON().data,
       };
 
-      res.set('Content-Type', 'text/html');
+      res.setHeader('Content-Type', 'text/html');
     } else {
-      const contentType = req.getHeader('Content-Type');
-      res.set('Content-Type', contentType);
+      const contentType = fragment.type;
+      res.setHeader('Content-Type', contentType);
     }
 
     res.status(200).send(fragmentData);
