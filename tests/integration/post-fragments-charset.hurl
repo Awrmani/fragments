@@ -10,7 +10,7 @@ user1@email.com:password1
 
 HTTP/1.1 201
 [Asserts]
-header "Location" matches "^localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
 jsonpath "$.status" == "ok"
 jsonpath "$.fragment.type" == "text/plain; charset=utf-8"
 [Captures]
