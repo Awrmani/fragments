@@ -17,7 +17,8 @@ module.exports = async (req, res) => {
 
     res.setHeader(
       'Location',
-      process.env.API_URL || req.headers.host + '/v1/fragments/' + fragment.id
+      process.env.API_URL + '/v1/fragments/' + fragment.id ||
+        req.headers.host + '/v1/fragments/' + fragment.id
     );
     //res.setHeader('content-type', fragment.type);
 
