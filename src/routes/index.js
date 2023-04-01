@@ -10,6 +10,8 @@ const { authenticate } = require('../authorization/index');
 
 const { createSuccessResponse } = require('../response');
 
+const { hostname } = require('os');
+
 // Create a router that we can use to mount our API
 const router = express.Router();
 
@@ -33,6 +35,8 @@ router.get('/', (req, res) => {
       author,
       githubUrl: 'https://github.com/awrmani/fragments',
       version,
+      // Include the hostname in the response
+      hostname: hostname(),
     })
   );
 });
