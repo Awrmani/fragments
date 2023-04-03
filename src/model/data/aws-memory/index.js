@@ -104,7 +104,7 @@ async function listFragments(ownerId, expand = false) {
 }
 
 // Delete a fragment's data from s3 bucket.
-async function deleteFragmentData(ownerId, id) {
+async function deleteFragment(ownerId, id) {
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
@@ -129,4 +129,4 @@ module.exports.writeFragment = writeFragment;
 module.exports.readFragment = readFragment;
 module.exports.writeFragmentData = writeFragmentData;
 module.exports.readFragmentData = readFragmentData;
-module.exports.deleteFragment = deleteFragmentData;
+module.exports.deleteFragment = deleteFragment;
