@@ -31,6 +31,10 @@
           "value": "http://localhost:8080"
         },
         {
+          "name": "AWS_S3_BUCKET_NAME",
+          "value": "avalaee-asr-fragments"
+        },
+        {
           "name": "AWS_COGNITO_CLIENT_ID",
           "value": ""
         },
@@ -80,7 +84,7 @@
   ],
   "placementConstraints": [],
   "memory": "512",
-  "taskRoleArn": null,
+  "taskRoleArn": "arn:aws:iam::691002229205:role/LabRole",
   "compatibilities": ["EC2", "FARGATE"],
   "taskDefinitionArn": "arn:aws:ecs:us-east-1:691002229205:task-definition/fragments-task:2",
   "family": "fragments-task",
