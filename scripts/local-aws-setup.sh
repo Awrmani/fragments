@@ -18,9 +18,6 @@ export AWS_SESSION_TOKEN=test
 export AWS_DEFAULT_REGION=us-east-1
 echo "AWS_DEFAULT_REGION=us-east-1"
 
-#export AWS_S3_ENDPOINT_URL=http://localstack:4566
-#echo "AWS_S3_ENDPOINT_URL=http://localstack:4566"
-
 # Wait for LocalStack to be ready, by inspecting the response from /health, see:
 # https://github.com/localstack/localstack/issues/4904#issuecomment-966315170
 echo 'Waiting for LocalStack S3...'
