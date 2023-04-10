@@ -20,6 +20,8 @@ module.exports = async (req, res) => {
     logger.debug({ extension }, 'GET /:id Extension');
 
     const fragment = await Fragment.byId(req.user, id);
+    logger.debug({ fragment }, 'getById fragment');
+
     var fragmentData = await fragment.getData();
     const data = Buffer.from(fragmentData).toString();
     logger.debug({ data }, 'Data from Buffer');
@@ -43,8 +45,11 @@ module.exports = async (req, res) => {
     }
 
     res.status(200).send(fragmentData);
-    //res.status(200).json(createSuccessResponse({ fragmentData }));
   } catch (err) {
-    res.status(400).json(createErrorResponse(400, 'Invalid request', err));
+    // logger.debug({ err }, '--err');
+    if (err.message === 'unable to read fragment data') {
+      return res.status(404).json(createErrorResponse(404, 'Invalid request', err));
+    }
+    return res.status(400).json(createErrorResponse(400, 'Invalid request', err));
   }
 };

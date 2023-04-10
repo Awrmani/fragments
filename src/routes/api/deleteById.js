@@ -11,14 +11,13 @@ const logger = require('../../logger');
  */
 module.exports = async (req, res) => {
   try {
-    const idExt = req.params.id;
-    const id = path.parse(idExt).name;
-    logger.debug({ id }, '---ID---');
+    const id = path.parse(req.params.id).name;
+    logger.debug({ id }, '---DeleteID---');
 
     await Fragment.delete(req.user, id);
     logger.debug('Data from Buffer');
 
-    res.status(200).json(createSuccessResponse(id + ' data deleted'));
+    return res.status(200).json(createSuccessResponse(id + ' data deleted'));
   } catch (err) {
     res.status(400).json(createErrorResponse(400, 'Invalid request', err));
   }
