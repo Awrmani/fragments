@@ -35,14 +35,6 @@
           "value": "avalaee-asr-fragments"
         },
         {
-          "name": "AWS_COGNITO_CLIENT_ID",
-          "value": ""
-        },
-        {
-          "name": "AWS_COGNITO_POOL_ID",
-          "value": ""
-        },
-        {
           "name": "AWS_REGION",
           "value": "us-east-1"
         },
