@@ -21,6 +21,7 @@ module.exports = async (req, res) => {
 
     const fragment = await Fragment.byId(req.user, id);
     logger.debug({ fragment }, 'getById fragment');
+    logger.debug('AWS_REGION: ' + process.env.AWS_REGION);
 
     var fragmentData = await fragment.getData();
     const data = Buffer.from(fragmentData).toString();
@@ -46,10 +47,11 @@ module.exports = async (req, res) => {
 
     res.status(200).send(fragmentData);
   } catch (err) {
-    // logger.debug({ err }, '--err');
+    logger.debug({ err }, '--err');
     if (err.message === 'unable to read fragment data') {
       return res.status(404).json(createErrorResponse(404, 'Invalid request', err));
     }
+
     return res.status(400).json(createErrorResponse(400, 'Invalid request', err));
   }
 };

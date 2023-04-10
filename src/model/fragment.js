@@ -87,7 +87,7 @@ class Fragment {
       throw new Error(`fragment not found`);
     }
 
-    return frag;
+    return new Fragment(frag);
   }
 
   /**
