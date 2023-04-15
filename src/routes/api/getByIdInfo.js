@@ -11,8 +11,7 @@ const logger = require('../../logger');
  */
 module.exports = async (req, res) => {
   try {
-    const idExt = req.params.id;
-    const id = path.parse(idExt).name;
+    const id = path.parse(req.params.id).name;
     logger.debug({ id }, '---ID---');
 
     const fragment = await Fragment.byId(req.user, id);
