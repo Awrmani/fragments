@@ -21,14 +21,10 @@ const validTypes = [
   `text/markdown`,
   `text/html`,
   `application/json`,
-  /*
-   Others will be added later.
-
   `image/png`,
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 class Fragment {
@@ -56,9 +52,6 @@ class Fragment {
     this.ownerId = ownerId;
     this.created = created || new Date().toISOString();
     this.updated = updated || new Date().toISOString();
-
-    //var content = contentType.parse(type);
-    //this.type = contentType.format(content);
     this.type = type;
     this.size = size;
   }
@@ -175,6 +168,60 @@ class Fragment {
   static isSupportedType(value) {
     const { type: parsedType } = contentType.parse(value);
     return validTypes.some((validTypes) => validTypes === parsedType);
+  }
+
+  static isSupportedConversion(input, output) {
+    switch (input) {
+      case 'text/plain':
+        if (output == '.txt') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'text/markdown':
+        if (output == '.md' || output == '.html' || output == '.txt') {
+          return true;
+        } else {
+          return false;
+        }
+
+      case 'text/html':
+        if (output == '.html' || output == '.txt') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'application/json':
+        if (output == '.json' || output == '.txt') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'image/png':
+        if (output == '.png' || output == '.jpg' || output == '.webp' || output == '.gif') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'image/jpeg':
+        if (output == '.png' || output == '.jpg' || output == '.webp' || output == '.gif') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'image/webp':
+        if (output == '.png' || output == '.jpg' || output == '.webp' || output == '.gif') {
+          return true;
+        } else {
+          return false;
+        }
+      case 'image/gif':
+        if (output == '.png' || output == '.jpg' || output == '.webp' || output == '.gif') {
+          return true;
+        } else {
+          return false;
+        }
+    }
   }
 }
 
