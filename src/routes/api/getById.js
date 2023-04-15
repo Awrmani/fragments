@@ -4,8 +4,123 @@ const { createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const path = require('path');
 const md = require('markdown-it')();
+const sharp = require('sharp');
+const mime = require('mime-types');
 
 const logger = require('../../logger');
+
+const validConversions = {
+  'text/plain': ['.txt'],
+  'text/markdown': ['.md', '.html', '.txt'],
+  'text/html': ['.html', '.txt'],
+  'application/json': ['.json', '.txt'],
+  'image/png': ['.png', '.jpg', '.webp', '.gif'],
+  'image/jpeg': ['.png', '.jpg', '.webp', '.gif'],
+  'image/webp': ['.png', '.jpg', '.webp', '.gif'],
+  'image/gif': ['.png', '.jpg', '.webp', '.gif'],
+};
+
+function convertType(contentType, targetExtension, data) {
+  if (validConversions[contentType] && validConversions[contentType].includes(targetExtension)) {
+    switch (contentType) {
+      case 'text/plain':
+        if (targetExtension === '.txt') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data.toString('utf8');
+        }
+        break;
+      case 'text/markdown':
+        if (targetExtension === '.md') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return md.render(data.toString('utf8'));
+        } else if (targetExtension === '.html' || targetExtension === '.txt') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data.toString('utf8');
+        }
+
+        break;
+      case 'text/html':
+      case 'application/json':
+        if (
+          targetExtension === '.md' ||
+          targetExtension === '.html' ||
+          targetExtension === '.txt'
+        ) {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data.toString('utf8');
+        }
+        break;
+      case 'image/png':
+        if (targetExtension === '.png') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data;
+        } else if (targetExtension === '.jpg') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('jpg').toBuffer();
+        } else if (targetExtension === '.webp') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('webp').toBuffer();
+        } else if (targetExtension === '.gif') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('gif').toBuffer();
+        }
+
+        break;
+      case 'image/jpeg':
+        if (targetExtension === '.png') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('png').toBuffer();
+        } else if (targetExtension === '.jpg') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data;
+        } else if (targetExtension === '.webp') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('webp').toBuffer();
+        } else if (targetExtension === '.gif') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('gif').toBuffer();
+        }
+
+        break;
+      case 'image/webp':
+        if (targetExtension === '.png') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('png').toBuffer();
+        } else if (targetExtension === '.jpg') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('jpg').toBuffer();
+        } else if (targetExtension === '.webp') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data;
+        } else if (targetExtension === '.gif') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('gif').toBuffer();
+        }
+
+        break;
+      case 'image/gif':
+        if (targetExtension === '.png') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('gif').toBuffer();
+        } else if (targetExtension === '.jpg') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('jpg').toBuffer();
+        } else if (targetExtension === '.webp') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return sharp(data).toFormat('webp').toBuffer();
+        } else if (targetExtension === '.gif') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data;
+        }
+
+        break;
+      default:
+        logger.error(`Invalid content type: ${contentType}`);
+    }
+  } else {
+    logger.error(`Invalid conversion: ${contentType} to ${targetExtension}`);
+  }
+}
 
 /**
  * Get a list of fragments for the given Id
@@ -27,31 +142,25 @@ module.exports = async (req, res) => {
     const data = Buffer.from(fragmentData).toString();
     logger.debug({ data }, 'Data from Buffer');
 
-    //extension += !extension ? '.txt' : '';
-    if (extension === '.txt') {
-      res.setHeader('Content-Type', 'text/plain');
-    } else if (extension === '.md') {
-      var dataHTML = md.render(data);
-      logger.debug({ dataHTML }, 'md Converted to html');
-      dataHTML = Buffer.from(dataHTML);
-      fragmentData = {
-        type: 'Buffer',
-        data: dataHTML.toJSON().data,
-      };
-
-      res.setHeader('Content-Type', 'text/html');
+    var resData;
+    if (idExt) {
+      if (!Fragment.isSupportedConversion(fragment.mimeType, idExt)) {
+        throw new Error('Unsupported type conversion');
+      }
+      resData = convertType(fragment.mimeType, idExt, fragmentData);
     } else {
-      const contentType = fragment.type;
-      res.setHeader('Content-Type', contentType);
+      resData = fragmentData;
     }
 
-    res.status(200).send(fragmentData);
+    const resType = idExt ? mime.lookup(idExt) : fragment.mimeType;
+    res.setHeader('Content-Type', resType);
+
+    res.status(200).send(resData);
   } catch (err) {
     logger.debug({ err }, '--err');
     if (err.message === 'unable to read fragment data') {
       return res.status(404).json(createErrorResponse(404, 'Invalid request', err));
     }
-
     return res.status(400).json(createErrorResponse(400, 'Invalid request', err));
   }
 };
