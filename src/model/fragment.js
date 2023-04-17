@@ -171,6 +171,8 @@ class Fragment {
   }
 
   static isSupportedConversion(input, output) {
+    logger.debug({ input }, 'conversion: input');
+    logger.debug({ output }, 'conversion: output');
     switch (input) {
       case 'text/plain':
         if (output == '.txt') {

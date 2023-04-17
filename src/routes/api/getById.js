@@ -32,10 +32,10 @@ function convertType(contentType, targetExtension, data) {
       case 'text/markdown':
         if (targetExtension === '.md') {
           logger.debug(`Converting ${contentType} to ${targetExtension}`);
-          return md.render(data.toString('utf8'));
+          return data.toString('utf8');
         } else if (targetExtension === '.html' || targetExtension === '.txt') {
           logger.debug(`Converting ${contentType} to ${targetExtension}`);
-          return data.toString('utf8');
+          return md.render(data.toString('utf8'));
         }
 
         break;
@@ -143,16 +143,17 @@ module.exports = async (req, res) => {
     logger.debug({ data }, 'Data from Buffer');
 
     var resData;
-    if (idExt) {
-      if (!Fragment.isSupportedConversion(fragment.mimeType, idExt)) {
+    if (extension) {
+      if (!Fragment.isSupportedConversion(fragment.mimeType, extension)) {
         throw new Error('Unsupported type conversion');
       }
-      resData = convertType(fragment.mimeType, idExt, fragmentData);
+      resData = convertType(fragment.mimeType, extension, fragmentData);
+      logger.debug({ resData }, 'resData');
     } else {
       resData = fragmentData;
     }
 
-    const resType = idExt ? mime.lookup(idExt) : fragment.mimeType;
+    const resType = extension ? mime.lookup(extension) : fragment.mimeType;
     res.setHeader('Content-Type', resType);
 
     res.status(200).send(resData);
