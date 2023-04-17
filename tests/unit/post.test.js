@@ -17,7 +17,7 @@ describe('POST /v1/fragments', () => {
   test('unsupported type', async () => {
     const res = await request(app)
       .post('/v1/fragments')
-      .set('content-type', 'image/png')
+      .set('content-type', 'audio/aac')
       .send(Buffer.from('test'))
       .auth('user1@email.com', 'password1');
     logger.debug(async () => {
