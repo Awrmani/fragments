@@ -137,6 +137,10 @@ module.exports = async (req, res) => {
     const fragment = await Fragment.byId(req.user, id);
     logger.debug({ fragment }, 'getById fragment');
     logger.debug('AWS_REGION: ' + process.env.AWS_REGION);
+    const contentType = fragment.type;
+
+    const index = contentType.indexOf(';');
+    const charset = index !== -1 ? contentType.slice(index) : '';
 
     var fragmentData = await fragment.getData();
     const data = Buffer.from(fragmentData).toString();
@@ -154,7 +158,7 @@ module.exports = async (req, res) => {
     }
 
     const resType = extension ? mime.lookup(extension) : fragment.mimeType;
-    res.setHeader('Content-Type', resType);
+    res.setHeader('Content-Type', resType + charset);
 
     res.status(200).send(resData);
   } catch (err) {
