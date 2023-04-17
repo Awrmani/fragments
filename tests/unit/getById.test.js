@@ -20,7 +20,7 @@ describe('GET /v1/fragments/:id', () => {
     expect(res.statusCode).toBe(200);
   });
 
-  test('fragments/:id returns text/html when there is a .md extension', async () => {
+  test('fragments/:id converts text/markdown to text/html when there is a .html extension', async () => {
     const fragment = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -30,10 +30,11 @@ describe('GET /v1/fragments/:id', () => {
     const id = fragment.header.location.split('/')[3];
     logger.debug({ id }, 'Id Jest');
     const res = await request(app)
-      .get(`/v1/fragments/${id}.md`)
+      .get(`/v1/fragments/${id}.html`)
       .auth('user1@email.com', 'password1');
 
-    const data = JSON.parse(res.text).data;
+    const data = res.text;
+    logger.debug({ data }, '--data--');
     const text = Buffer.from(data).toString('utf-8').trim();
     expect(text).toBe('<h1>test</h1>');
     expect(res.type).toBe('text/html');
