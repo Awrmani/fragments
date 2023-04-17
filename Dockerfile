@@ -25,7 +25,8 @@ COPY package*.json ./
 RUN npm install
 
 ########################################################
-FROM node:18.14.2-alpine3.16@sha256:84b677af19caffafe781722d4bf42142ad765ac4233960e18bc526ce036306fe AS deploy
+#FROM node:18.14.2-alpine3.16@sha256:84b677af19caffafe781722d4bf42142ad765ac4233960e18bc526ce036306fe AS deploy
+FROM node:18.14.2@sha256:586cdef48f920dea2f47a954b8717601933aa1daa0a08264abf9144789abf8ae AS deploy
 
 WORKDIR /app
 COPY --from=dependencies /app /app
