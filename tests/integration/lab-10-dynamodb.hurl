@@ -22,7 +22,7 @@ POST http://localhost:8080/v1/fragments
 Content-Type: text/markdown
 [BasicAuth]
 user1@email.com:password1
-```DynamoDB is **great**.```
+`DynamoDB is **great**.`
 HTTP/1.1 201
 [Asserts]
 [Captures]

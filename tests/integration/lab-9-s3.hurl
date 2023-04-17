@@ -9,7 +9,7 @@ Content-Type: text/plain
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-```Hello S3!```
+`Hello S3!`
 
 HTTP/1.1 201
 [Captures]
