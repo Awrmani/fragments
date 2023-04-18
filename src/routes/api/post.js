@@ -12,14 +12,10 @@ module.exports = async (req, res) => {
       type: req.get('Content-Type'),
       size: req.body.byteLength,
     });
-    await fragment.setData(req.body);
     await fragment.save();
+    await fragment.setData(req.body);
 
-    res.setHeader(
-      'Location',
-      process.env.API_URL + '/v1/fragments/' + fragment.id ||
-        req.headers.host + '/v1/fragments/' + fragment.id
-    );
+    res.setHeader('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
     res.setHeader('content-type', fragment.mimeType);
 
     return res.status(201).json(createSuccessResponse({ fragment }));

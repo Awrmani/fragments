@@ -3,6 +3,7 @@
 const path = require('path');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
+const logger = require('../../logger');
 
 /**
  * update an existing fragment
@@ -15,9 +16,10 @@ module.exports = async (req, res) => {
 
     const id = path.parse(req.params.id).name;
     const fragment = await Fragment.byId(req.user, id);
+    logger.debug({ fragment }, 'fragment put');
 
-    await fragment.setData(req.body);
     await fragment.save();
+    await fragment.setData(req.body);
 
     res.setHeader('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
     res.setHeader('Content-Type', fragment.mimeType);
