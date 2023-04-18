@@ -23,13 +23,13 @@ Content-Type: text/plain
 `fragment!`
 
 PUT {{url}}
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
 [BasicAuth]
 user1@email.com:password1
 `fragment updated!`
 
-HTTP/1.1 200
-Content-Type: text/plain
+HTTP/1.1 201
+Content-Type: text/plain; charset=utf-8
 
 GET {{url}}
 [BasicAuth]
