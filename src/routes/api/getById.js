@@ -40,12 +40,13 @@ function convertType(contentType, targetExtension, data) {
 
         break;
       case 'text/html':
+        if (targetExtension === '.html' || targetExtension === '.txt') {
+          logger.debug(`Converting ${contentType} to ${targetExtension}`);
+          return data.toString('utf8');
+        }
+        break;
       case 'application/json':
-        if (
-          targetExtension === '.md' ||
-          targetExtension === '.html' ||
-          targetExtension === '.txt'
-        ) {
+        if (targetExtension === '.json' || targetExtension === '.txt') {
           logger.debug(`Converting ${contentType} to ${targetExtension}`);
           return data.toString('utf8');
         }
